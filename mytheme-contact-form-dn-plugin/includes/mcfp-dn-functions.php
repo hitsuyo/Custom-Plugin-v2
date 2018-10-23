@@ -155,9 +155,10 @@ function validate_dn()
 
     // get the blog administrator's email address
     // $to = get_option( 'admin_email' ); 
-     $to = "sangsmnetapi1@gmail.com";
+     $to = "sangsmnetapi2@yahoo.com";
     // $to = "sangsmnetapi2@yahoo.com";
     $subject = "Someone sent a message from ".get_bloginfo('name');
+
 
 
   // if(isset( $_POST['cf-submitted'])){
@@ -179,9 +180,11 @@ function validate_dn()
               else
               {            
                   //send email
+                  $all_content = 'Send from: '.$name.' <'.$email."\n\n".'Message: '."\n".$message;
+                  // $all_content .= "";
                      // If email has been process for sending, display a success message
                   // if ( wp_mail( $to, $subject, $message, $headers ) ) {
-                  if ( wp_mail( $to, $subject, $message, $headers ) ) {
+                  if ( wp_mail( $to, $subject, $all_content, $headers ) ) {
                       echo '<div>';
                       echo '<p>Thanks for contacting me, expect a response soon.</p>';
                       echo '</div>';
@@ -207,6 +210,7 @@ function cf_shortcode_dn() {
 }
 add_shortcode( 'sitepoint_contact_form_dn', 'cf_shortcode_dn' );
 
+// [sitepoint_contact_form_dn]
 
  // Reduce the likelihood of  your messages being flagged as spam.
 // add_action( 'init', 'fix_my_email_return_path' );
