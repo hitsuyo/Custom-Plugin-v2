@@ -66,12 +66,12 @@ function mcfp_dn_plugin_options() {
 $response = "";
 
 //function to generate response
-function my_contact_form_generate_response($type, $message){
+function my_contact_form_generate_response($type, $reminder){
 
     global $response;
 
-    if($type == "success") $response = "<div class='success'>{$message}</div>";
-    else $response = "<div class='error'>{$message}</div>";
+    if($type == "success") $response = "<div class='success'>{".$reminder."}</div>";
+    else $response = "<div class='error'>{".$reminder."}</div>";
 
 }
 
@@ -80,50 +80,39 @@ function my_contact_form_generate_response($type, $message){
 function html_form_code_dn() {
 ?>
 <div id="respond">
-  <!-- <php echo $response; ?> -->
+<!--   <php
+    echo $response; 
+  ?> -->
   <form action="<?php the_permalink(); ?>" method="post">
-    <p><label for="cf-name">Name: <span>*</span> <br><input type="text" name="cf-name" ></label></p>
-    <p><label for="cf-email">Email: <span>*</span> <br><input type="text" name="cf-email" ></label></p>
-    <p><label for="cf-message">Message: <span>*</span> <br><textarea type="text" name="cf-message"></textarea></label></p>
+    <p><label id="name-label" for="cf-name">Name: <span>*</span> <br><input type="text" name="cf-name" ></label></p>
+    <p><label id="email-label" for="cf-email">Email: <span>*</span> <br><input type="text" name="cf-email" ></label></p>
+    <p><label id="message-label" for="cf-message">Message: <span>*</span> <br><textarea type="text" name="cf-message"></textarea></label></p>
     <!-- <p><label for="message_human">Human Verification: <span>*</span> <br><input type="text" style="width: 60px;" name="message_human"> + 3 = 5</label></p> -->
     <input type="hidden" name="cf-submitted" value="1">
     <p><input type="submit"></p>
   </form>
 </div>
+
+<style>
+  #respond {width: 60%; margin: 0 auto;}
+  #name-label, #email-label, #message-label {font-size: 1.5rem;}
+</style>
 <?php
 
-  validate_dn();
+  validate_deliver_mail_dn();
 
 }
 
 
-function deliver_mail_dn() {
-
-    // if the submit button is clicked, send the email
-    if ( isset( $_POST['cf-submitted'] ) ) {
-
-        // If email has been process for sending, display a success message
-        if ( wp_mail( $to, $subject, $message, $headers ) ) {
-            echo '<div>';
-            echo '<p>Thanks for contacting me, expect a response soon.</p>';
-            echo '</div>';
-        } else {
-            echo '<div class="container">';
-            echo 'An unexpected error occurred';
-            echo '</div>';
-        }
-    }
-}
-
-function validate_dn()
+function validate_deliver_mail_dn()
 {
     //response messages
     $not_human       = "Human verification incorrect.";
     $missing_content = "Please supply all information.";
     $email_invalid   = "Email Address Invalid.";
-    $message_unsent  = "Message was not sent. Try Again.";
+    // $message_unsent  = "Message was not sent. Try Again.";
     // $message_sent    = "Thanks! Your message has been sent."; 
-    $message_sent    = "Thanks for contacting me, expect a response soon.";
+    // $message_sent    = "Thanks for contacting me, expect a response soon.";
      
     //user posted variables
 
@@ -154,12 +143,9 @@ function validate_dn()
     }
 
     // get the blog administrator's email address
-    // $to = get_option( 'admin_email' ); 
-     $to = "sangsmnetapi2@yahoo.com";
-    // $to = "sangsmnetapi2@yahoo.com";
+    $to = get_option( 'admin_email' ); // good with Yahoo mail
+
     $subject = "Someone sent a message from ".get_bloginfo('name');
-
-
 
   // if(isset( $_POST['cf-submitted'])){
 
@@ -176,18 +162,27 @@ function validate_dn()
             //validate presence of name and message
               if(empty($name) || empty($message)){
                   my_contact_form_generate_response("error", $missing_content);
+                  echo '<p style="margin: 0 auto; width: 60%;">lack of input</p>';
               }
               else
               {            
                   //send email
-                  $all_content = 'Send from: '.$name.' <'.$email."\n\n".'Message: '."\n".$message;
+                  $all_content = 'Sent from: ['.$name.'] < '.$email.' >'."\n\n";
+                  $all_content .= 'Message: '."\n".$message."\n\n";
+                  $all_content .= '---'."\n";
+                  $all_content .= 'Contact Form of website: '.get_bloginfo('url');
                   // $all_content .= "";
                      // If email has been process for sending, display a success message
                   // if ( wp_mail( $to, $subject, $message, $headers ) ) {
                   if ( wp_mail( $to, $subject, $all_content, $headers ) ) {
                       echo '<div>';
-                      echo '<p>Thanks for contacting me, expect a response soon.</p>';
+                      echo '<p id="thank">Thanks for contacting me, expect a response soon.</p>';
                       echo '</div>';
+
+                      echo '<style>';
+                      echo 'p#thank{margin: 0 auto; width: 60%;}';
+                      echo '</style>';
+
                   } else {
                       echo '<div class="container">';
                       echo 'An unexpected error occurred';
@@ -201,6 +196,7 @@ function validate_dn()
   // }
 }
 
+
 function cf_shortcode_dn() {
     ob_start();
     // validate_dn();
@@ -209,6 +205,9 @@ function cf_shortcode_dn() {
     return ob_get_clean();
 }
 add_shortcode( 'sitepoint_contact_form_dn', 'cf_shortcode_dn' );
+
+
+
 
 // [sitepoint_contact_form_dn]
 
@@ -220,11 +219,4 @@ add_shortcode( 'sitepoint_contact_form_dn', 'cf_shortcode_dn' );
 
 
 // ----------------------------------
-
-
-
-
-
-
-  // ----------------------------------
 

@@ -2,7 +2,7 @@
 /**
 * Plugin Name: Mytheme Contact Form Plugin - Donut
 * Plugin URI: 
-* Description: A custom plugin to create Contact Form - mcfp - Demo 2 - Created on 22/10/2018.
+* Description: A custom plugin to create Contact Form - mcfp - Demo 2 - Created on 22/10/2018. Should use with WP Mail SMTP plugin.
 * Version: 2.0
 * Author: Sang
 * Author URI: 
